@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1113490958217741259}
+  - component: {fileID: 1289993289715398592}
   m_Layer: 5
   m_Name: ui_transform_parent_panel_zone
   m_TagString: Untagged
@@ -38,6 +39,26 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1289993289715398592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113490958217741256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25872f70028a4ae1b8645512dc1e9338, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _zoneNumberText: {fileID: 1113490958705530495}
+  _zoneBgImage: {fileID: 1113490958437217195}
+  _normalZoneColor: {r: 1, g: 1, b: 1, a: 1}
+  _safeZoneColor: {r: 0.35686275, g: 0.7529412, b: 0.9137255, a: 1}
+  _superZoneColor: {r: 0.34901962, g: 0.65882355, b: 0, a: 1}
+  _inactiveNormalZoneColor: {r: 0.48235294, g: 0.48235294, b: 0.48235294, a: 1}
+  _inactiveSafeZoneColor: {r: 0.16862746, g: 0.3529412, b: 0.42352942, a: 1}
+  _inactiveSuperZoneColor: {r: 0.19607843, g: 0.36862746, b: 0, a: 1}
 --- !u!1 &1113490958437217193
 GameObject:
   m_ObjectHideFlags: 0
@@ -100,7 +121,7 @@ MonoBehaviour:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -126,7 +147,7 @@ GameObject:
   - component: {fileID: 1113490958705530494}
   - component: {fileID: 1113490958705530495}
   m_Layer: 5
-  m_Name: ui_image_panel_zone_text_value
+  m_Name: ui_text_panel_zone_value
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
