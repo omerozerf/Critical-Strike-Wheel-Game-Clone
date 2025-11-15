@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,9 +15,12 @@ namespace SlotSystem
         
         public void SetSlot(SlotSO slotSO, int count)
         {
-            _iconImage.sprite = slotSO.GetIcon();
-            _countText.text = count.ToString();
             m_SlotSO = slotSO;
+            
+            _iconImage.sprite = slotSO.GetIcon();
+            _countText.text = count > 0
+                ? $"x{count.ToString()}" 
+                : string.Empty;
         }
         
         public SlotSO GetSlot()
