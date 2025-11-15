@@ -15,21 +15,17 @@ namespace WheelSystem
         [SerializeField] private SlotSO[] _bombSlotSOArray;
 
 
-        private void Awake()
+        private void Start()
         {
-            WheelController.OnWheelStopped += HandleWheelStopped;
+            SetupSlots(2000);
         }
 
-        private void OnDestroy()
+        private void OnValidate()
         {
-            WheelController.OnWheelStopped -= HandleWheelStopped;
+            ValidateSlotComponents();
+            CategorizeSlotRewards();
         }
-
-
-        private void HandleWheelStopped(int slotIndex)
-        {
-            SetupSlots(55);
-        }
+        
         
         public void SetupSlots(int zone)
         {
@@ -138,9 +134,22 @@ namespace WheelSystem
                 case SlotRewardType.RewardCommon:
                     maxCount += 1;
                     break;
+
+                case SlotRewardType.RewardRare:
+                    break;
+
+                case SlotRewardType.RewardEpic:
+                    maxCount = Mathf.Max(minCount, maxCount - 1);
+                    break;
+
                 case SlotRewardType.RewardLegendary:
                     maxCount = Mathf.Max(2, maxCount - 2);
                     break;
+
+                case SlotRewardType.Bomb:
+                    return 0;
+
+                case SlotRewardType.None:
                 default:
                     throw new ArgumentOutOfRangeException(">" + type + "<", "Unhandled SlotRewardType value.");
             }
@@ -148,14 +157,6 @@ namespace WheelSystem
             maxCount = Mathf.Max(minCount, maxCount);
             return UnityEngine.Random.Range(minCount, maxCount + 1);
         }
-    
-        
-        private void OnValidate()
-        {
-            ValidateSlotComponents();
-            CategorizeSlotRewards();
-        }
-
         
         private void ValidateSlotComponents()
         {

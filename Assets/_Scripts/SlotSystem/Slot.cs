@@ -11,24 +11,9 @@ namespace SlotSystem
         [SerializeField] private TMP_Text _countText;
 
         private SlotSO m_SlotSO;
+        private int m_Count;
 
         
-        public void SetSlot(SlotSO slotSO, int count)
-        {
-            m_SlotSO = slotSO;
-            
-            _iconImage.sprite = slotSO.GetIcon();
-            _countText.text = count > 0
-                ? $"x{count.ToString()}" 
-                : string.Empty;
-        }
-        
-        public SlotSO GetSlot()
-        {
-            return m_SlotSO;
-        }
-        
-
         private void OnValidate()
         {
             if (!_iconImage)
@@ -40,6 +25,28 @@ namespace SlotSystem
             {
                 _countText = GetComponentInChildren<TMP_Text>();
             }
+        }
+        
+        
+        public void SetSlot(SlotSO slotSO, int count)
+        {
+            m_SlotSO = slotSO;
+            m_Count = count;
+            
+            _iconImage.sprite = slotSO.GetIcon();
+            _countText.text = count > 0
+                ? $"x{count.ToString()}" 
+                : string.Empty;
+        }
+        
+        public SlotSO GetSlotSO()
+        {
+            return m_SlotSO;
+        }
+        
+        public int GetCount()
+        {
+            return m_Count;
         }
     }
 }
