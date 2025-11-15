@@ -1,0 +1,42 @@
+namespace DefaultNamespace
+{
+    public enum SlotType
+    {
+        Death,
+        AviatorGlassesEaster,
+        BaseballCapEaster,
+        Cash,
+        ChestBig,
+        ChestBronze,
+        ChestGold,
+        ChestSilver,
+        ChestSmall,
+        ChestStandard,
+        ChestSuper,
+        Gold,
+        HelmetPumpkin,
+        BayonetEasterTime,
+        BayonetSummerVice,
+        GrenadeM26,
+        GrenadeM67,
+        HealthshotNeurostim,
+        HealthshotRegenerator,
+        Molotov,
+        Tier1Shotgun,
+        Tier2Melee,
+        Tier2Rifle,
+        Tier3Shotgun,
+        Tier3Smg,
+        Tier3Sniper,
+        ArmorPoints,
+        KnifePoints,
+        PistolPointsAlt,
+        PistolPoints,
+        RiflePoints,
+        ShotgunPoints,
+        SmgPoints,
+        SniperPoints,
+        SubmachinePoints,
+        VestPoints
+    }
+}
