@@ -9,11 +9,19 @@ namespace SlotSystem
         [SerializeField] private Image _iconImage;
         [SerializeField] private TMP_Text _countText;
 
+        private SlotSO m_SlotSO;
+
         
-        public void SetSlot(Sprite iconSprite, int count)
+        public void SetSlot(SlotSO slotSO, int count)
         {
-            _iconImage.sprite = iconSprite;
+            _iconImage.sprite = slotSO.GetIcon();
             _countText.text = count.ToString();
+            m_SlotSO = slotSO;
+        }
+        
+        public SlotSO GetSlot()
+        {
+            return m_SlotSO;
         }
         
 
