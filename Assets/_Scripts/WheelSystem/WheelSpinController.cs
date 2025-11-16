@@ -8,7 +8,6 @@ namespace WheelSystem
     {
         [SerializeField] private Transform _spinTransform;
         [SerializeField] private float _spinTime;
-        [SerializeField] private float _spinSpeed;
         [SerializeField] private float _fixSpinTime;
         [SerializeField] private int _minFullTurns;
         [SerializeField] private int _maxFullTurns;
@@ -48,10 +47,9 @@ namespace WheelSystem
             var fullTurns = UnityEngine.Random.Range(_minFullTurns, _maxFullTurns + 1);
             var baseAngle = fullTurns * 360f;
             var finalAngle = baseAngle + UnityEngine.Random.Range(0f, 360f);
-            var duration = finalAngle / _spinSpeed;
 
             _spinTransform
-                .DORotate(new Vector3(0f, 0f, -finalAngle), duration, RotateMode.FastBeyond360)
+                .DORotate(new Vector3(0f, 0f, -finalAngle), _spinTime, RotateMode.FastBeyond360)
                 .SetEase(Ease.OutQuart)
                 .OnComplete(FixTargetAngle);
         }
@@ -73,7 +71,7 @@ namespace WheelSystem
 
             _spinTransform
                 .DORotate(new Vector3(0f, 0f, targetZ), _fixSpinTime)
-                .SetEase(Ease.OutElastic)
+                .SetEase(Ease.OutBack, 0.8f)
                 .OnComplete(() => {
                     {
                         m_IsSpinning = false;

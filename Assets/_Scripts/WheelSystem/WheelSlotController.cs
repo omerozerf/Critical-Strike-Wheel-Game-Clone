@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using SlotSystem;
@@ -262,11 +263,11 @@ namespace WheelSystem
             if (_allSlotSOArray == null || _allSlotSOArray.Length == 0)
                 return;
 
-            var commons = new System.Collections.Generic.List<SlotSO>();
-            var rares = new System.Collections.Generic.List<SlotSO>();
-            var epics = new System.Collections.Generic.List<SlotSO>();
-            var legendaries = new System.Collections.Generic.List<SlotSO>();
-            var bombs = new System.Collections.Generic.List<SlotSO>();
+            var commons = new List<SlotSO>();
+            var rares = new List<SlotSO>();
+            var epics = new List<SlotSO>();
+            var legendaries = new List<SlotSO>();
+            var bombs = new List<SlotSO>();
 
             foreach (var so in _allSlotSOArray)
             {

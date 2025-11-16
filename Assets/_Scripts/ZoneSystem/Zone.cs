@@ -32,8 +32,8 @@ namespace ZoneSystem
         
         private void HandleZoneNumberUpdated(int zoneNumber)
         {
-            var isSuperZone = zoneNumber % 30 == 0;
-            var isSafeZone  = zoneNumber == 1 || (zoneNumber % 5 == 0);
+            var isSuperZone = zoneNumber % GameCommonVariableManager.GetSuperZoneInterval() == 0;
+            var isSafeZone  = zoneNumber == 1 || (zoneNumber % GameCommonVariableManager.GetSuperZoneInterval() == 0);
 
             if (isSuperZone)
             {
