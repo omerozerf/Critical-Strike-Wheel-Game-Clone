@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Managers;
 using SlotSystem;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -47,6 +48,11 @@ namespace WheelSystem
         private void Awake()
         {
             ZonePanelController.OnZoneChanged += HandleOnZoneChanged;
+        }
+        
+        private void OnDestroy()
+        {
+            ZonePanelController.OnZoneChanged -= HandleOnZoneChanged;
         }
         
         private void OnValidate()
@@ -127,7 +133,7 @@ namespace WheelSystem
             {
                 slot.transform
                     .DORotate(
-                        new Vector3(slot.transform.eulerAngles.x, 90f, slot.transform.eulerAngles.z), 
+                        new Vector3(slot.transform.eulerAngles.x, 90f, slot.transform.eulerAngles.z),
                         _slotCountAnimationDuration);
             }
 

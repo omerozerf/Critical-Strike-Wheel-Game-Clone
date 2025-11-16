@@ -1,4 +1,5 @@
 using System;
+using ButtonSystem;
 using DG.Tweening;
 using UnityEngine;
 
@@ -28,6 +29,7 @@ namespace WheelSystem
         {
             SpinButton.OnButtonClicked -= HandleSpinButtonClicked;
             WheelSlotController.OnSlotsChanged -= HandleSlotsChanged;
+            m_IsSpinning = false;
         }
         
         private void OnValidate()

@@ -9,6 +9,7 @@ namespace WheelSystem
         [SerializeField] private Slot[] _slotArray;
         
         public static event Action<Slot> OnSlotSelected;
+        public static event Action OnBombSelected;
         
 
         private void Awake()
@@ -36,6 +37,11 @@ namespace WheelSystem
             }
 
             var selectedSlot = _slotArray[slotIndex];
+            if (selectedSlot.GetSlotSO().GetSlotType() == SlotType.Death)
+            {
+                OnBombSelected?.Invoke();
+                return;
+            }
             OnSlotSelected?.Invoke(selectedSlot);
         }
         

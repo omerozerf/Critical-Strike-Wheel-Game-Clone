@@ -1,4 +1,5 @@
 using System;
+using Managers;
 using UnityEngine;
 using UnityEngine.UI;
 using ZoneSystem;
@@ -23,7 +24,13 @@ namespace WheelSystem
         {
             ZonePanelController.OnZoneChanged += HandleZoneChanged;
         }
+        
+        private void OnDestroy()
+        {
+            ZonePanelController.OnZoneChanged -= HandleZoneChanged;
+        }
 
+        
         private void HandleZoneChanged(int zoneIndex)
         {
             var fixZone = zoneIndex + 1;
