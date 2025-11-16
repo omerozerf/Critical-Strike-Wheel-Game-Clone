@@ -2262,17 +2262,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sliceEditorConfigs:
   - _allowedSlots:
-    - {fileID: 11400000, guid: 5d4252a08d31540748ef8802a8b68378, type: 2}
-    - {fileID: 11400000, guid: 1aa0cafa620924affa3c7ee924cae405, type: 2}
-    - {fileID: 11400000, guid: 2a6749d61326044b1b89b984480fa10b, type: 2}
+    - {fileID: 11400000, guid: 6117b1bffae884b61bf4fb0658f4e71a, type: 2}
   - _allowedSlots:
-    - {fileID: 11400000, guid: 5d4252a08d31540748ef8802a8b68378, type: 2}
-    - {fileID: 11400000, guid: 1aa0cafa620924affa3c7ee924cae405, type: 2}
-    - {fileID: 11400000, guid: 2a6749d61326044b1b89b984480fa10b, type: 2}
+    - {fileID: 11400000, guid: 6117b1bffae884b61bf4fb0658f4e71a, type: 2}
   - _allowedSlots:
-    - {fileID: 11400000, guid: 5d4252a08d31540748ef8802a8b68378, type: 2}
-    - {fileID: 11400000, guid: 1aa0cafa620924affa3c7ee924cae405, type: 2}
-    - {fileID: 11400000, guid: 2a6749d61326044b1b89b984480fa10b, type: 2}
+    - {fileID: 11400000, guid: 6117b1bffae884b61bf4fb0658f4e71a, type: 2}
   - _allowedSlots:
     - {fileID: 11400000, guid: 5d4252a08d31540748ef8802a8b68378, type: 2}
     - {fileID: 11400000, guid: 1aa0cafa620924affa3c7ee924cae405, type: 2}
@@ -4521,7 +4515,7 @@ MonoBehaviour:
   m_Padding:
     m_Left: 0
     m_Right: 0
-    m_Top: 208
+    m_Top: 170
     m_Bottom: 0
   m_ChildAlignment: 1
   m_StartCorner: 0
@@ -4570,6 +4564,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cardPrefab: {fileID: 6261898840796724899, guid: dc4f33603f0dd48618a1010757c40445, type: 3}
+  _parentTransform: {fileID: 1352099631}
 --- !u!1 &1356793286
 GameObject:
   m_ObjectHideFlags: 0
