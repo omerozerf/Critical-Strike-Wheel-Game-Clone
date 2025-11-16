@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using SlotSystem;
 using UnityEngine;
@@ -8,6 +9,7 @@ namespace WheelSystem
 {
     public class WheelSlotController : MonoBehaviour
     {
+        [SerializeField] private float _slotCountAnimationDuration;
         [SerializeField] private Slot[] _slotArray;
         [SerializeField] private SlotSO[] _allSlotSOArray;
         [SerializeField] private SlotSO[] _commonSlotSOArray;
@@ -47,19 +49,35 @@ namespace WheelSystem
         }
 
 
-        private void SetupSlots(int zone)
+        private async void SetupSlots(int zone)
         {
             if (_slotArray == null || _slotArray.Length == 0)
             {
                 Debug.LogWarning("SetupSlots called but _slotArray is empty.", this);
                 return;
             }
-            
-            
+
+            foreach (var slot in _slotArray)
+            {
+                slot.transform
+                    .DORotate(
+                        new Vector3(slot.transform.eulerAngles.x, 90f, slot.transform.eulerAngles.z), 
+                        _slotCountAnimationDuration);
+            }
+
+            await UniTask.WaitForSeconds(_slotCountAnimationDuration);
+
             // Fill all slots with non-bomb rewards based on power
             SetupSlotWithReward(zone);
 
             AssignRandomBombSlot(zone);
+            
+            foreach (var slot in _slotArray)
+            {
+                slot.transform
+                    .DORotate(new Vector3(slot.transform.eulerAngles.x, 0f, slot.transform.eulerAngles.z),
+                        _slotCountAnimationDuration);
+            }
         }
 
         private void AssignRandomBombSlot(int zone)

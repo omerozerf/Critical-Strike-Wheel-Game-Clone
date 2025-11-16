@@ -1351,6 +1351,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18b49b6e2d3f4b1c875acb0a09dda59e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _slotCountAnimationDuration: 0.25
   _slotArray:
   - {fileID: 3763452582188447153}
   - {fileID: 1423061551}
