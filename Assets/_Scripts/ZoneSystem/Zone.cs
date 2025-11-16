@@ -116,9 +116,17 @@ namespace ZoneSystem
             return _rectTransform;
         }
 
-        public void SetPosition(Vector2 anchoredPosition)
+        public void SetPosition(Vector2 anchoredPosition, bool animate = true)
         {
-             _rectTransform.DOAnchorPos(anchoredPosition, 0.5f).SetEase(Ease.Linear);
+            if (!animate)
+            {
+                _rectTransform.anchoredPosition = anchoredPosition;
+            }
+            else
+            {
+                _rectTransform.DOAnchorPos(anchoredPosition, 0.5f).SetEase(Ease.Linear);
+            }
+
             HandleZonePositionUpdated(anchoredPosition);
         }
     }
