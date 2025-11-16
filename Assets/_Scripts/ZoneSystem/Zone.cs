@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -74,21 +75,21 @@ namespace ZoneSystem
                 }
                 case ZoneType.Normal:
                 {
-                    _zoneNumberText.color = position.x > 0 ? _normalZoneColor : _inactiveNormalZoneColor;
-                    _zoneBgImage.color = position.x > 0 ? _normalZoneColor : _inactiveNormalZoneColor;
+                    _zoneNumberText.color = position.x >= 0 ? _normalZoneColor : _inactiveNormalZoneColor;
+                    _zoneBgImage.color = position.x >= 0 ? _normalZoneColor : _inactiveNormalZoneColor;
                     break;
                 }
 
                 case ZoneType.Safe:
                 {
-                    _zoneNumberText.color = position.x > 0 ? _safeZoneColor : _inactiveSafeZoneColor;
-                    _zoneBgImage.color = position.x > 0 ? _safeZoneColor : _inactiveSafeZoneColor;
+                    _zoneNumberText.color = position.x >= 0 ? _safeZoneColor : _inactiveSafeZoneColor;
+                    _zoneBgImage.color = position.x >= 0 ? _safeZoneColor : _inactiveSafeZoneColor;
                     break;
                 }
                 case ZoneType.Super:
                 {
-                    _zoneNumberText.color = position.x > 0 ? _superZoneColor : _inactiveSuperZoneColor;
-                    _zoneBgImage.color = position.x > 0 ? _superZoneColor : _inactiveSuperZoneColor;
+                    _zoneNumberText.color = position.x >= 0 ? _superZoneColor : _inactiveSuperZoneColor;
+                    _zoneBgImage.color = position.x >= 0 ? _superZoneColor : _inactiveSuperZoneColor;
                     break;
                 }
                 default:
@@ -113,6 +114,12 @@ namespace ZoneSystem
         public RectTransform GetRectTransform()
         {
             return _rectTransform;
+        }
+
+        public void SetPosition(Vector2 anchoredPosition)
+        {
+             _rectTransform.DOAnchorPos(anchoredPosition, 0.5f).SetEase(Ease.Linear);
+            HandleZonePositionUpdated(anchoredPosition);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace ZoneSystem
         [SerializeField] private Zone _zonePrefab;
 
 
-        public void CreateZone(int zoneNumber, Vector2 anchoredPos, Transform parent)
+        public Zone CreateZone(int zoneNumber, Vector2 anchoredPos, Transform parent)
         {
             var zone = Instantiate(_zonePrefab, parent);
             var rt = zone.GetRectTransform();
@@ -17,6 +17,8 @@ namespace ZoneSystem
             rt.localScale = Vector3.one;
 
             zone.SetZoneNumber(zoneNumber);
+            
+            return zone;
         }
     }
 }
