@@ -17,16 +17,16 @@ namespace ZoneSystem
 
         private void Awake()
         {
-            ZonePanelController.OnZoneChanged += HandleWheelStopped;
+            ZonePanelController.OnZoneChanged += HandleZoneChanged;
         }
         
         private void OnDestroy()
         {
-            ZonePanelController.OnZoneChanged -= HandleWheelStopped;
+            ZonePanelController.OnZoneChanged -= HandleZoneChanged;
         }
         
         
-        private void HandleWheelStopped(int slotIndex)
+        private void HandleZoneChanged(int slotIndex)
         {
             var fixZone = slotIndex + 1;
 

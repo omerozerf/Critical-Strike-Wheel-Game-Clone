@@ -6,11 +6,12 @@ namespace CardSystem
     public class CardCreator : MonoBehaviour
     {
         [SerializeField] private Card _cardPrefab;
+        [SerializeField] private Transform _parentTransform;
 
 
         public Card CreateCard(Slot slot)
         {
-            var card = Instantiate(_cardPrefab, transform);
+            var card = Instantiate(_cardPrefab, _parentTransform);
             var rt = card.GetRectTransform();
 
             rt.localRotation = Quaternion.identity;
