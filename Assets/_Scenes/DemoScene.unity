@@ -3708,10 +3708,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _zoneCreator: {fileID: 1625388250}
+  _zoneCount: 20
   _zoneSpacing: 90
   _zoneParentTransform: {fileID: 135759820}
   _leftRecycleX: -542
-  _rightSpawnX: 542
 --- !u!114 &1625388250
 MonoBehaviour:
   m_ObjectHideFlags: 0
