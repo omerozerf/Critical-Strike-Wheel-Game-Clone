@@ -7,6 +7,7 @@ namespace ZoneSystem
 {
     public class Zone : MonoBehaviour
     {
+        [SerializeField] private RectTransform _rectTransform;
         [SerializeField] private TMP_Text _zoneNumberText;
         [SerializeField] private Image _zoneBgImage;
         [SerializeField] private Color _normalZoneColor;
@@ -30,6 +31,11 @@ namespace ZoneSystem
             if (!_zoneBgImage)
             {
                 _zoneBgImage = GetComponentInChildren<Image>();
+            }
+            
+            if (!_rectTransform)
+            {
+                _rectTransform = GetComponent<RectTransform>();
             }
         }
         
@@ -56,7 +62,6 @@ namespace ZoneSystem
             }
 
             m_ZoneType = ZoneType.Normal;
-            Debug.Log($"Zone {zoneNumber} = NORMAL (Bomb Var)");
         }
         
         private void HandleZonePositionUpdated(Vector2 position)
@@ -103,6 +108,11 @@ namespace ZoneSystem
             _zoneNumberText.text = m_ZoneNumber.ToString();
             
             HandleZoneNumberUpdated(zoneNumber);
+        }
+
+        public RectTransform GetRectTransform()
+        {
+            return _rectTransform;
         }
     }
 }
