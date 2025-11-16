@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,18 +15,27 @@ namespace SlotSystem
         
         private void OnValidate()
         {
-            if (!_iconImage)
-            {
-                _iconImage = GetComponentInChildren<Image>();
-            }
+            InitializeIconImage();
+            InitializeCountText();
+        }
 
+        private void InitializeCountText()
+        {
             if (!_countText)
             {
                 _countText = GetComponentInChildren<TMP_Text>();
             }
         }
-        
-        
+
+        private void InitializeIconImage()
+        {
+            if (!_iconImage)
+            {
+                _iconImage = GetComponentInChildren<Image>();
+            }
+        }
+
+
         public void SetSlot(SlotSO slotSO, int count)
         {
             m_SlotSO = slotSO;

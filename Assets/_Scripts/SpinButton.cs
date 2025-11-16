@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,22 +11,27 @@ public class SpinButton : MonoBehaviour
     
     private void Awake()
     {
-        _spinButton.onClick.AddListener(OnSpinButtonClicked);
+        _spinButton.onClick.AddListener(HandleSpinButtonClicked);
     }
 
     private void OnDestroy()
     {
-        _spinButton.onClick.RemoveListener(OnSpinButtonClicked);
+        _spinButton.onClick.RemoveListener(HandleSpinButtonClicked);
     }
-
-
-    private void OnSpinButtonClicked()
+    
+    private void OnValidate()
+    {
+        InitializeSpinButton();
+    }
+    
+    
+    private void HandleSpinButtonClicked()
     {
         OnButtonClicked?.Invoke();
     }
 
-
-    private void OnValidate()
+    
+    private void InitializeSpinButton()
     {
         if (!_spinButton)
         {

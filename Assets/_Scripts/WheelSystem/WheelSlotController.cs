@@ -23,18 +23,20 @@ namespace WheelSystem
         {
             ZonePanelController.OnZoneChanged += HandleOnZoneChanged;
         }
-
-        private void HandleOnZoneChanged(int zoneNumber)
-        {
-            var fixZone = zoneNumber + 1; // Fix zone number to be 1-based
-            SetupSlots(fixZone);
-        }
-
+        
         private void OnValidate()
         {
             ValidateSlotComponents();
             CategorizeSlotRewards();
         }
+        
+        
+        private void HandleOnZoneChanged(int zoneNumber)
+        {
+            var fixZone = zoneNumber + 1; // Fix zone number to be 1-based
+            SetupSlots(fixZone);
+        }
+        
 
         private bool IsSafeZone(int zone)
         {
@@ -47,8 +49,7 @@ namespace WheelSystem
             if (GameCommonVariableManager.GetSuperZoneInterval() <= 0) return false;
             return zone != 1 && zone % GameCommonVariableManager.GetSuperZoneInterval() == 0;
         }
-
-
+        
         private async void SetupSlots(int zone)
         {
             if (_slotArray == null || _slotArray.Length == 0)

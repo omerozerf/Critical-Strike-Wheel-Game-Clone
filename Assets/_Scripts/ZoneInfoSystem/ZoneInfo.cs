@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using ZoneSystem;
@@ -14,8 +13,7 @@ namespace ZoneInfoSystem
         {
             ZonePanelController.OnZoneChanged += HandleZoneChanged;
         }
-
-
+        
         private void OnDestroy()
         {
             ZonePanelController.OnZoneChanged += HandleZoneChanged;

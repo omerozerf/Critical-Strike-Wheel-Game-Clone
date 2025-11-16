@@ -28,7 +28,12 @@ namespace WheelSystem
             SpinButton.OnButtonClicked -= HandleSpinButtonClicked;
         }
         
+        private void OnValidate()
+        {
+            InitializeSpinTransform();
+        }
         
+
         private void HandleSpinButtonClicked()
         {
             if (m_IsSpinning) return;
@@ -79,8 +84,7 @@ namespace WheelSystem
                 });
         }
 
-
-        private void OnValidate()
+        private void InitializeSpinTransform()
         {
             if (!_spinTransform)
             {

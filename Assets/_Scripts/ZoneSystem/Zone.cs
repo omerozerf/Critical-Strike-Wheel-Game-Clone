@@ -24,27 +24,16 @@ namespace ZoneSystem
         
         private void OnValidate()
         {
-            if (!_zoneNumberText)
-            {
-                _zoneNumberText = GetComponentInChildren<TMP_Text>();
-            }
-            
-            if (!_zoneBgImage)
-            {
-                _zoneBgImage = GetComponentInChildren<Image>();
-            }
-            
-            if (!_rectTransform)
-            {
-                _rectTransform = GetComponent<RectTransform>();
-            }
+            InitializeZoneNumberText();
+            InitializeZoneBackgroundImage();
+            InitializeRectTransform();
         }
-        
+
         
         private void HandleZoneNumberUpdated(int zoneNumber)
         {
-            bool isSuperZone = zoneNumber % 30 == 0;
-            bool isSafeZone  = zoneNumber == 1 || (zoneNumber % 5 == 0);
+            var isSuperZone = zoneNumber % 30 == 0;
+            var isSafeZone  = zoneNumber == 1 || (zoneNumber % 5 == 0);
 
             if (isSuperZone)
             {
@@ -94,6 +83,31 @@ namespace ZoneSystem
                 }
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+        
+        
+        private void InitializeRectTransform()
+        {
+            if (!_rectTransform)
+            {
+                _rectTransform = GetComponent<RectTransform>();
+            }
+        }
+
+        private void InitializeZoneBackgroundImage()
+        {
+            if (!_zoneBgImage)
+            {
+                _zoneBgImage = GetComponentInChildren<Image>();
+            }
+        }
+
+        private void InitializeZoneNumberText()
+        {
+            if (!_zoneNumberText)
+            {
+                _zoneNumberText = GetComponentInChildren<TMP_Text>();
             }
         }
         

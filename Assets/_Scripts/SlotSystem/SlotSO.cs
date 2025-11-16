@@ -44,7 +44,7 @@ namespace SlotSystem
         {
             if (string.IsNullOrEmpty(_name)) return;
 
-            string path = AssetDatabase.GetAssetPath(this);
+            var path = AssetDatabase.GetAssetPath(this);
             if (!string.IsNullOrEmpty(path))
             {
                 AssetDatabase.RenameAsset(path, _name + "SlotSO");

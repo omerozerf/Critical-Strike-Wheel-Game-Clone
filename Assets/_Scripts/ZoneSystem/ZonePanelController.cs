@@ -29,20 +29,9 @@ namespace ZoneSystem
         
         private void Start()
         {
-            for (var index = 0; index < _zoneCount; index++)
-            {
-                var zone = _zoneCreator
-                    .CreateZone(index + 1, new Vector2(index * _zoneSpacing, 0f), _zoneParentTransform);
-                
-                m_ZoneList.Add(zone);
-            }
-
-            m_CurrentZoneNumber = 0;
-            m_LastZoneNumber = _zoneCount;
-            
-            OnZoneChanged?.Invoke(m_CurrentZoneNumber);
+            InitializeZones();
         }
-
+        
         private void OnDestroy()
         {
             WheelSpinController.OnWheelStopped -= HandleOnWheelStopped;
@@ -62,6 +51,22 @@ namespace ZoneSystem
             NextZone();
         }
         
+        
+        private void InitializeZones()
+        {
+            for (var index = 0; index < _zoneCount; index++)
+            {
+                var zone = _zoneCreator
+                    .CreateZone(index + 1, new Vector2(index * _zoneSpacing, 0f), _zoneParentTransform);
+                
+                m_ZoneList.Add(zone);
+            }
+
+            m_CurrentZoneNumber = 0;
+            m_LastZoneNumber = _zoneCount;
+            
+            OnZoneChanged?.Invoke(m_CurrentZoneNumber);
+        }
         
         private void NextZone()
         {
