@@ -32,6 +32,8 @@ namespace WheelSystem
         [SerializeField] private SlotSO[] _legendarySlotSOArray;
         [SerializeField] private SlotSO[] _bombSlotSOArray;
         
+        public static event Action OnSlotsChanged;
+        
         
         private struct RewardWeights
         {
@@ -142,6 +144,10 @@ namespace WheelSystem
                     .DORotate(new Vector3(slot.transform.eulerAngles.x, 0f, slot.transform.eulerAngles.z),
                         _slotCountAnimationDuration);
             }
+            
+            await UniTask.WaitForSeconds(_slotCountAnimationDuration);
+            
+            OnSlotsChanged?.Invoke();
         }
 
         private void AssignRandomBombSlot(int zone)

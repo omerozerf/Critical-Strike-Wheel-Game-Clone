@@ -20,11 +20,14 @@ namespace WheelSystem
         private void Awake()
         {
             SpinButton.OnButtonClicked += HandleSpinButtonClicked;
+            WheelSlotController.OnSlotsChanged += HandleSlotsChanged;
+            m_IsSpinning = true;
         }
-        
+
         private void OnDestroy()
         {
             SpinButton.OnButtonClicked -= HandleSpinButtonClicked;
+            WheelSlotController.OnSlotsChanged -= HandleSlotsChanged;
         }
         
         private void OnValidate()
@@ -32,6 +35,11 @@ namespace WheelSystem
             InitializeSpinTransform();
         }
         
+        
+        private void HandleSlotsChanged()
+        {
+            m_IsSpinning = false;
+        }
 
         private void HandleSpinButtonClicked()
         {
@@ -74,7 +82,6 @@ namespace WheelSystem
                 .SetEase(Ease.OutBack, 0.8f)
                 .OnComplete(() => {
                     {
-                        m_IsSpinning = false;
                         var stoppedSlice = Mathf.RoundToInt(_spinTransform.eulerAngles.z / (360f / sliceCount));
                                                                                 
                         OnWheelStopped?.Invoke(stoppedSlice);
