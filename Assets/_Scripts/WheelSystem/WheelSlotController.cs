@@ -1,255 +1,195 @@
 using System;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Managers;
 using SlotSystem;
 using UnityEngine;
+using WheelSystem.WheelSlotControllerHelpers;
 using ZoneSystem;
 
 namespace WheelSystem
 {
-    [Serializable]
-    public class SliceEditorConfig
-    { 
-        public SlotSO[] _allowedSlots;
-    }
-    
     public class WheelSlotController : MonoBehaviour
     {
         [Header("Slot Editor")]
         [SerializeField] private SliceEditorConfig[] _sliceEditorConfigs;
+
         [Space]
         [Header("Slot Animation")]
         [SerializeField] private float _slotCountAnimationDuration;
+
         [Space]
         [Header("Slot Components")]
         [SerializeField] private Slot[] _slotArray;
         [SerializeField] private SlotSO[] _allSlotSOArray;
-        [SerializeField] private SlotSO[] _commonSlotSOArray;
-        [SerializeField] private SlotSO[] _rareSlotSOArray;
-        [SerializeField] private SlotSO[] _epicSlotSOArray;
-        [SerializeField] private SlotSO[] _legendarySlotSOArray;
-        [SerializeField] private SlotSO[] _bombSlotSOArray;
-        
+
         public static event Action OnSlotsChanged;
+
+        private SlotLibrary m_SlotLibrary;
+        private WheelRewardCalculator m_RewardCalculator;
+
         
-        
-        private struct RewardWeights
-        {
-            public float common;
-            public float rare;
-            public float epic;
-            public float legendary;
-        }
-        
-        
+
         private void Awake()
         {
+            InitServices();
+
             ZonePanelController.OnZoneChanged += HandleOnZoneChanged;
         }
-        
+
         private void OnDestroy()
         {
             ZonePanelController.OnZoneChanged -= HandleOnZoneChanged;
         }
-        
+
         private void OnValidate()
         {
             ValidateSlotComponents();
-            CategorizeSlotRewards();
+
+            if (m_SlotLibrary == null)
+                m_SlotLibrary = new SlotLibrary();
+
+            m_SlotLibrary.CategorizeFrom(_allSlotSOArray);
         }
-        
-        
+
+
+
+        private void InitServices()
+        {
+            if (m_SlotLibrary == null)
+                m_SlotLibrary = new SlotLibrary();
+
+            m_SlotLibrary.CategorizeFrom(_allSlotSOArray);
+
+            if (m_RewardCalculator == null)
+            {
+                m_RewardCalculator = new WheelRewardCalculator(
+                    GameCommonVariableManager.GetSafeZoneInterval,
+                    GameCommonVariableManager.GetSuperZoneInterval);
+            }
+        }
+
+
+
         private void HandleOnZoneChanged(int zoneNumber)
         {
-            var fixZone = zoneNumber + 1; // Fix zone number to be 1-based
-            SetupSlots(fixZone);
-        }
-        
-        
-        private RewardWeights GetBaseWeightsForPower(int power)
-        {
-            var t = Mathf.Clamp01(power / 100f);
-
-            float commonWeight;
-            float rareWeight;
-            float epicWeight;
-            float legendaryWeight;
-
-            if (IsSuperZone(power))
-            {
-                commonWeight = 0f;
-                rareWeight = Mathf.Lerp(20f, 10f, t);
-                epicWeight = Mathf.Lerp(40f, 45f, t);
-                legendaryWeight = Mathf.Lerp(40f, 45f, t);
-            }
-            else if (IsSafeZone(power))
-            {
-                commonWeight = Mathf.Lerp(30f, 5f, t);
-                rareWeight = Mathf.Lerp(35f, 25f, t);
-                epicWeight = Mathf.Lerp(25f, 35f, t);
-                legendaryWeight = Mathf.Lerp(10f, 35f, t);
-            }
-            else
-            {
-                commonWeight = Mathf.Lerp(60f, 5f, t);
-                rareWeight = Mathf.Lerp(30f, 20f, t);
-                epicWeight = Mathf.Lerp(9f, 35f, t);
-                legendaryWeight = Mathf.Lerp(1f, 40f, t);
-            }
-
-            return new RewardWeights
-            {
-                common = commonWeight,
-                rare = rareWeight,
-                epic = epicWeight,
-                legendary = legendaryWeight
-            };
+            var fixedZone = zoneNumber + 1; // 1-based zone
+            SetupSlots(fixedZone);
         }
 
-        private bool IsSafeZone(int zone)
-        {
-            if (GameCommonVariableManager.GetSafeZoneInterval() <= 0) return false;
-            return zone == 1 || zone % GameCommonVariableManager.GetSafeZoneInterval() == 0;
-        }
 
-        private bool IsSuperZone(int zone)
-        {
-            if (GameCommonVariableManager.GetSuperZoneInterval() <= 0) return false;
-            return zone != 1 && zone % GameCommonVariableManager.GetSuperZoneInterval() == 0;
-        }
-        
+
         private async void SetupSlots(int zone)
+        {
+            if (!HasSlots())
+                return;
+
+            await AnimateSlotsHide();
+
+            FillSlotsForZone(zone);
+
+            AssignRandomBombSlot(zone);
+
+            await AnimateSlotsReveal();
+
+            OnSlotsChanged?.Invoke();
+        }
+
+        private bool HasSlots()
         {
             if (_slotArray == null || _slotArray.Length == 0)
             {
                 Debug.LogWarning("SetupSlots called but _slotArray is empty.", this);
-                return;
+                return false;
             }
 
-            foreach (var slot in _slotArray)
-            {
-                slot.transform
-                    .DORotate(
-                        new Vector3(slot.transform.eulerAngles.x, 90f, slot.transform.eulerAngles.z),
-                        _slotCountAnimationDuration);
-            }
-
-            await UniTask.WaitForSeconds(_slotCountAnimationDuration);
-
-            // Fill all slots with non-bomb rewards based on power
-            SetupSlotWithReward(zone);
-
-            AssignRandomBombSlot(zone);
-            
-            foreach (var slot in _slotArray)
-            {
-                slot.transform
-                    .DORotate(new Vector3(slot.transform.eulerAngles.x, 0f, slot.transform.eulerAngles.z),
-                        _slotCountAnimationDuration);
-            }
-            
-            await UniTask.WaitForSeconds(_slotCountAnimationDuration);
-            
-            OnSlotsChanged?.Invoke();
+            return true;
         }
 
-        private void AssignRandomBombSlot(int zone)
+        private async UniTask AnimateSlotsHide()
         {
-            if (zone == 1 || zone % GameCommonVariableManager.GetSafeZoneInterval() == 0 ||
-                zone % GameCommonVariableManager.GetSuperZoneInterval() == 0) return;
-            
-            if (_bombSlotSOArray != null && _bombSlotSOArray.Length > 0)
+            foreach (var slot in _slotArray)
             {
-                var bombIndex = UnityEngine.Random.Range(0, _slotArray.Length);
-                var bombSo = GetRandomSlotSOFromArray(_bombSlotSOArray);
-                if (bombSo != null)
-                {
-                    _slotArray[bombIndex].SetSlot(bombSo, 0);
-                }
+                var t = slot.transform;
+                t.DORotate(
+                    new Vector3(t.eulerAngles.x, 90f, t.eulerAngles.z),
+                    _slotCountAnimationDuration);
             }
-            else
-            {
-                Debug.LogWarning("SetupSlots: _bombSlotSOArray is empty, cannot assign bomb slot.", this);
-            }
+
+            await UniTask.Delay(TimeSpan.FromSeconds(_slotCountAnimationDuration));
         }
 
-        private void SetupSlotWithReward(int power)
+        private async UniTask AnimateSlotsReveal()
+        {
+            foreach (var slot in _slotArray)
+            {
+                var t = slot.transform;
+                t.DORotate(
+                    new Vector3(t.eulerAngles.x, 0f, t.eulerAngles.z),
+                    _slotCountAnimationDuration);
+            }
+
+            await UniTask.Delay(TimeSpan.FromSeconds(_slotCountAnimationDuration));
+        }
+
+        private void FillSlotsForZone(int zone)
         {
             for (var i = 0; i < _slotArray.Length; i++)
             {
-                var rewardType = GetRandomNonBombRewardTypeForPowerAndSlice(power, i);
+                var rewardType = GetRandomRewardTypeForZoneAndSlice(zone, i);
                 var slotSo = GetRandomSlotSOForRewardTypeAndSlice(rewardType, i);
+
                 if (slotSo == null)
                 {
                     Debug.LogWarning($"No SlotSO found for reward type {rewardType} on slice {i}.", this);
                     continue;
                 }
 
-                var count = GetRandomCountForPower(power, rewardType);
+                var count = m_RewardCalculator.GetRandomCountForZoneAndType(zone, rewardType);
                 _slotArray[i].SetSlot(slotSo, count);
             }
         }
 
-        private SlotRewardType GetRandomNonBombRewardTypeForPower(int power)
+
+
+        private SlotRewardType GetRandomRewardTypeForZone(int zone)
         {
-            var w = GetBaseWeightsForPower(power);
-
-            var total = w.common + w.rare + w.epic + w.legendary;
-            var weightedRandom = UnityEngine.Random.Range(0f, total);
-
-            if (weightedRandom < w.common) return SlotRewardType.RewardCommon;
-            weightedRandom -= w.common;
-
-            if (weightedRandom < w.rare) return SlotRewardType.RewardRare;
-            weightedRandom -= w.rare;
-
-            if (weightedRandom < w.epic) return SlotRewardType.RewardEpic;
-
-            return SlotRewardType.RewardLegendary;
+            return m_RewardCalculator.GetRandomNonBombRewardTypeForZone(zone);
         }
-        
-        private SlotSO GetRandomSlotSOForRewardTypeAndSlice(SlotRewardType type, int sliceIndex)
+
+        private SlotRewardType GetRandomRewardTypeForZoneAndSlice(int zone, int sliceIndex)
         {
-            // Önce bu slice'ın AllowedSlots'unda bu type'a uyan SlotSO var mı bak
-            if (_sliceEditorConfigs != null &&
-                sliceIndex >= 0 &&
-                sliceIndex < _sliceEditorConfigs.Length)
+            var weights = m_RewardCalculator.GetBaseWeightsForZone(zone);
+
+            ApplySliceConstraints(sliceIndex, ref weights);
+
+            var total = weights.common + weights.rare + weights.epic + weights.legendary;
+            if (total <= 0.0001f)
             {
-                var cfg = _sliceEditorConfigs[sliceIndex];
-                if (cfg != null && cfg._allowedSlots != null && cfg._allowedSlots.Length > 0)
-                {
-                    List<SlotSO> candidates = null;
-
-                    foreach (var so in cfg._allowedSlots)
-                    {
-                        if (so == null) continue;
-                        if (so.GetRewardType() != type) continue;
-
-                        (candidates ??= new List<SlotSO>()).Add(so);
-                    }
-
-                    if (candidates != null && candidates.Count > 0)
-                    {
-                        var arr = candidates.ToArray();
-                        return GetRandomSlotSOFromArray(arr);
-                    }
-                }
+                return GetRandomRewardTypeForZone(zone);
             }
 
-            // Bu slice için bu type'tan SlotSO yoksa global listeden çek
-            return GetRandomSlotSOForRewardType(type);
+            return m_RewardCalculator.GetRandomNonBombRewardTypeWithWeights(weights);
         }
-        
+
+        private void ApplySliceConstraints(int sliceIndex, ref RewardWeights w)
+        {
+            if (!SliceAllowsRewardType(sliceIndex, SlotRewardType.RewardCommon))    w.common = 0f;
+            if (!SliceAllowsRewardType(sliceIndex, SlotRewardType.RewardRare))      w.rare = 0f;
+            if (!SliceAllowsRewardType(sliceIndex, SlotRewardType.RewardEpic))      w.epic = 0f;
+            if (!SliceAllowsRewardType(sliceIndex, SlotRewardType.RewardLegendary)) w.legendary = 0f;
+        }
+
         private bool SliceAllowsRewardType(int sliceIndex, SlotRewardType type)
         {
-            if (_sliceEditorConfigs == null || sliceIndex < 0 || sliceIndex >= _sliceEditorConfigs.Length)
-                return true; // constraint yok -> hepsi serbest
+            if (_sliceEditorConfigs == null ||
+                sliceIndex < 0 ||
+                sliceIndex >= _sliceEditorConfigs.Length)
+                return true;
 
             var cfg = _sliceEditorConfigs[sliceIndex];
             if (cfg == null || cfg._allowedSlots == null || cfg._allowedSlots.Length == 0)
-                return true; // bu slice için AllowedSlots tanımlı değil -> hepsi serbest
+                return true;
 
             foreach (var so in cfg._allowedSlots)
             {
@@ -261,114 +201,49 @@ namespace WheelSystem
             return false;
         }
 
-        private SlotRewardType GetRandomNonBombRewardTypeForPowerAndSlice(int power, int sliceIndex)
+
+
+        private SlotSO GetRandomSlotSOForRewardTypeAndSlice(SlotRewardType type, int sliceIndex)
         {
-            var w = GetBaseWeightsForPower(power);
-
-            // Bu slice'ta olmayan type'ların ağırlığını 0 yap
-            if (!SliceAllowsRewardType(sliceIndex, SlotRewardType.RewardCommon))    w.common = 0f;
-            if (!SliceAllowsRewardType(sliceIndex, SlotRewardType.RewardRare))      w.rare = 0f;
-            if (!SliceAllowsRewardType(sliceIndex, SlotRewardType.RewardEpic))      w.epic = 0f;
-            if (!SliceAllowsRewardType(sliceIndex, SlotRewardType.RewardLegendary)) w.legendary = 0f;
-
-            var total = w.common + w.rare + w.epic + w.legendary;
-
-            // Eğer hepsi 0 ise -> bu slice için constraint yokmuş gibi davran
-            if (total <= 0.0001f)
-                return GetRandomNonBombRewardTypeForPower(power);
-
-            var weightedRandom = UnityEngine.Random.Range(0f, total);
-
-            if (weightedRandom < w.common) return SlotRewardType.RewardCommon;
-            weightedRandom -= w.common;
-
-            if (weightedRandom < w.rare) return SlotRewardType.RewardRare;
-            weightedRandom -= w.rare;
-
-            if (weightedRandom < w.epic) return SlotRewardType.RewardEpic;
-
-            return SlotRewardType.RewardLegendary;
-        }
-
-        private SlotSO GetRandomSlotSOForRewardType(SlotRewardType type)
-        {
-            return type switch
+            if (_sliceEditorConfigs != null &&
+                sliceIndex >= 0 &&
+                sliceIndex < _sliceEditorConfigs.Length)
             {
-                SlotRewardType.RewardCommon => GetRandomSlotSOFromArray(_commonSlotSOArray),
-                SlotRewardType.RewardRare => GetRandomSlotSOFromArray(_rareSlotSOArray),
-                SlotRewardType.RewardEpic => GetRandomSlotSOFromArray(_epicSlotSOArray),
-                SlotRewardType.RewardLegendary => GetRandomSlotSOFromArray(_legendarySlotSOArray),
-                var _ => throw new ArgumentOutOfRangeException(">" + type + "<", "Unhandled SlotRewardType value.")
-            };
-        }
-
-        private SlotSO GetRandomSlotSOFromArray(SlotSO[] array)
-        {
-            if (array == null || array.Length == 0)
-                return null;
-
-            var index = UnityEngine.Random.Range(0, array.Length);
-            return array[index];
-        }
-
-        private int GetRandomCountForPower(int power, SlotRewardType type)
-        {
-            var t = Mathf.Clamp01(power / 100f);
-
-            var minCount = 1;
-            var maxCount = Mathf.RoundToInt(Mathf.Lerp(2f, 10f, t));
-
-            var isSafe = IsSafeZone(power);
-            var isSuper = IsSuperZone(power);
-
-            switch (type)
-            {
-                case SlotRewardType.RewardCommon:
-                    // Common can still appear in decent amounts, but we don't buff it in safe/super.
-                    maxCount += 1;
-                    break;
-
-                case SlotRewardType.RewardRare:
-                    if (isSafe) maxCount += 1;
-                    if (isSuper)
-                    {
-                        minCount = 2;
-                        maxCount += 2;
-                    }
-                    break;
-
-                case SlotRewardType.RewardEpic:
-                    maxCount = Mathf.Max(minCount, maxCount - 1);
-                    if (isSafe) maxCount += 1;
-                    if (isSuper)
-                    {
-                        minCount = 2;
-                        maxCount += 2;
-                    }
-                    break;
-
-                case SlotRewardType.RewardLegendary:
-                    maxCount = Mathf.Max(2, maxCount - 2);
-                    if (isSafe) maxCount += 1;
-                    if (isSuper)
-                    {
-                        minCount = 2;
-                        maxCount += 2;
-                    }
-                    break;
-
-                case SlotRewardType.Bomb:
-                    return 0;
-
-                case SlotRewardType.None:
-                default:
-                    throw new ArgumentOutOfRangeException(">" + type + "<", "Unhandled SlotRewardType value.");
+                var cfg = _sliceEditorConfigs[sliceIndex];
+                if (cfg != null && cfg._allowedSlots != null && cfg._allowedSlots.Length > 0)
+                {
+                    var candidate = m_SlotLibrary.GetRandomFromAllowed(type, cfg._allowedSlots);
+                    if (candidate != null)
+                        return candidate;
+                }
             }
 
-            maxCount = Mathf.Max(minCount, maxCount);
-            return UnityEngine.Random.Range(minCount, maxCount + 1);
+            return m_SlotLibrary.GetRandomForRewardType(type);
         }
-        
+
+
+        #region Bomb Assignment
+
+        private void AssignRandomBombSlot(int zone)
+        {
+            if (m_RewardCalculator.IsSafeZone(zone) || m_RewardCalculator.IsSuperZone(zone))
+                return;
+
+            var bombSo = m_SlotLibrary.GetRandomForRewardType(SlotRewardType.Bomb);
+            if (bombSo == null)
+            {
+                Debug.LogWarning("AssignRandomBombSlot: no bomb SlotSO found in SlotLibrary.", this);
+                return;
+            }
+
+            var bombIndex = UnityEngine.Random.Range(0, _slotArray.Length);
+            _slotArray[bombIndex].SetSlot(bombSo, 0);
+        }
+
+        #endregion
+
+        #region Validation
+
         private void ValidateSlotComponents()
         {
             if (_slotArray == null || _slotArray.Length == 0)
@@ -376,55 +251,11 @@ namespace WheelSystem
                 _slotArray = GetComponentsInChildren<Slot>();
                 if (_slotArray.Length != 8)
                 {
-                    Debug.LogWarning("WheelResultController expects exactly 8 Slot components as children.", this);
+                    Debug.LogWarning("WheelSlotController expects exactly 8 Slot components as children.", this);
                 }
             }
         }
 
-        private void CategorizeSlotRewards()
-        {
-            if (_allSlotSOArray == null || _allSlotSOArray.Length == 0)
-                return;
-
-            var commons = new List<SlotSO>();
-            var rares = new List<SlotSO>();
-            var epics = new List<SlotSO>();
-            var legendaries = new List<SlotSO>();
-            var bombs = new List<SlotSO>();
-
-            foreach (var so in _allSlotSOArray)
-            {
-                if (so == null) continue;
-
-                switch (so.GetRewardType())
-                {
-                    case SlotRewardType.RewardCommon:
-                        commons.Add(so);
-                        break;
-                    case SlotRewardType.RewardRare:
-                        rares.Add(so);
-                        break;
-                    case SlotRewardType.RewardEpic:
-                        epics.Add(so);
-                        break;
-                    case SlotRewardType.RewardLegendary:
-                        legendaries.Add(so);
-                        break;
-                    case SlotRewardType.Bomb:
-                        bombs.Add(so);
-                        break;
-                    case SlotRewardType.None:
-                        throw new ArgumentOutOfRangeException($"SlotRewardType.None is not a valid reward type for SlotSO.");
-                    default:
-                        throw new ArgumentOutOfRangeException($"Unhandled SlotRewardType value.");
-                }
-            }
-
-            _commonSlotSOArray = commons.ToArray();
-            _rareSlotSOArray = rares.ToArray();
-            _epicSlotSOArray = epics.ToArray();
-            _legendarySlotSOArray = legendaries.ToArray();
-            _bombSlotSOArray = bombs.ToArray();
-        }
+        #endregion
     }
 }
