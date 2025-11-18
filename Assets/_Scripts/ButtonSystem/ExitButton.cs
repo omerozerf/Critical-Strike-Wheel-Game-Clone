@@ -1,6 +1,7 @@
 using ScreenSystem;
 using UnityEngine;
 using UnityEngine.UI;
+using WheelSystem;
 
 namespace ButtonSystem
 {
@@ -11,11 +12,15 @@ namespace ButtonSystem
         
         private void Awake()
         {
+            SpinButton.OnButtonClicked += HandleSpinButtonClicked;
+            WheelSlotController.OnSlotsChanged += HandleSlotsChanged;
             _exitButton.onClick.AddListener(HandleExitButtonClicked);
         }
         
         private void OnDestroy()
         {
+            SpinButton.OnButtonClicked -= HandleSpinButtonClicked;
+            WheelSlotController.OnSlotsChanged -= HandleSlotsChanged;
             _exitButton.onClick.RemoveListener(HandleExitButtonClicked);
         }
         
@@ -28,6 +33,16 @@ namespace ButtonSystem
         private void HandleExitButtonClicked()
         {
             _screenController.Show();
+        }
+        
+        private void HandleSlotsChanged()
+        {
+            _exitButton.interactable = true;
+        }
+
+        private void HandleSpinButtonClicked()
+        {
+            _exitButton.interactable = false;
         }
         
         
