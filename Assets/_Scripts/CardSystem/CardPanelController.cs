@@ -65,5 +65,11 @@ namespace CardSystem
         {
             if (!_cardCreator) _cardCreator = GetComponent<CardCreator>();
         }
+        
+        
+        public List<Card> GetCardList()
+        {
+            return m_CardList;
+        }
     }
 }

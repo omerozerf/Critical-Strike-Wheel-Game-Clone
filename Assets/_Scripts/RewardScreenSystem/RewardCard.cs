@@ -12,13 +12,13 @@ namespace RewardScreenSystem
         [SerializeField] private TMP_Text _cardCountText;
         
         
-        public void SetCardData(Card card, int count)
+        public void SetCardData(Card card)
         {
             var slotSO = card.GetSlotSO();
             
-            _cardHeaderText.text = slotSO.GetName();
+            _cardHeaderText.text = slotSO.GetName().Replace(" ", "\n");
             _cardImage.sprite = slotSO.GetIcon();
-            _cardCountText.text = count.ToString();
+            _cardCountText.text = $"x{card.GetCount()}";
         }
     }
 }

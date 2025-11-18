@@ -9,7 +9,7 @@ namespace ScreenSystem
         [SerializeField] protected CanvasGroup _canvasGroup;
 
 
-        private void OnValidate()
+        protected virtual void OnValidate()
         {
             InitializeCanvasGroup();
         }

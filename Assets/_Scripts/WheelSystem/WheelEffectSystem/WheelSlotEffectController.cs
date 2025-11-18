@@ -78,6 +78,15 @@ namespace WheelSystem.WheelEffectSystem
                 wheelSlotEffect.GetRectTransform().DOAnchorPos(targetLocal, _moveDuration)
                     .SetEase(Ease.InQuad)
             );
+            sequence.Append(
+                wheelSlotEffect.GetImage().DOFade(0f, 0.25f)
+                    .SetEase(Ease.OutQuad).OnComplete(() =>
+                    {
+                        var color = wheelSlotEffect.GetImage().color;
+                        color.a = 1;
+                        wheelSlotEffect.GetImage().color = color;
+                    })
+            );
 
             var totalDuration = _scatterDuration + _moveDuration;
             _objectPoolManager.DespawnAfter(_objectPoolType, instance, totalDuration + 0.05f)
