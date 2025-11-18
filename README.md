@@ -1,15 +1,15 @@
 ## 🧾 Account Information (Company Games)
 
-| Game           | Username  | User ID          |
-|----------------|-----------|------------------|
-| Critical Strike | omerozerf | CD4E2D1A0B6A200  |
-| Polygun Arena   | omerozerf | B34B2DB5BF7167AB |
+| Game            | Username   | User ID          |
+|-----------------|------------|------------------|
+| Critical Strike | omerozerf  | CD4E2D1A0B6A200  |
+| Polygun Arena   | omerozerf  | B34B2DB5BF7167AB |
 
 # Wheel Rewards Progression Game
 
-Spin tabanlı, zone ilerlemeye dayalı bir Unity oyunu.  
-Oyuncu çarkı çevirerek ödüller toplar, ilerledikçe daha değerli ödüllerle karşılaşır ve bombalardan kaçınarak envanterini genişletir.  
-Oyun; Wheel sistemi, Zone progression, Slot/Reward üretimi, Card envanteri ve animasyonlu UI yapıları üzerine kuruludur.
+A Unity game based on spinning mechanics and zone progression.  
+The player spins the wheel to collect rewards, encounters higher-value rewards as zones advance, and avoids bombs while expanding their inventory.  
+Core systems include Wheel mechanics, Zone progression, Slot/Reward generation, Card inventory, Object Pooling, and animated UI structures.
 
 ---
 
@@ -21,130 +21,171 @@ Oyun; Wheel sistemi, Zone progression, Slot/Reward üretimi, Card envanteri ve a
 
 ## 🎮 Gameplay Preview
 
-| Görsel | Açıklama |
-|-------|----------|
-| ![](./MyRecordings/GameplayGIF.gif) | **Gameplay GIF** — Oran: 16:9 |
+| Image | Description |
+|-------|-------------|
+| ![](./MyRecordings/GameplayGIF.gif) | Gameplay GIF — Aspect Ratio: 16:9 |
 
-**Gameplay Video:**  
-[Google Drive Video Linki](https://drive.google.com/file/d/1WlAMrHjYNcj1LMWZfsJxsEpaWDi5QpxJ/view?usp=sharing)
+**Gameplay Videos & Screenshots:**  
+https://drive.google.com/drive/folders/1vAjKEF8tkwy2UwZllpBJsYHQo_hDQJl1?usp=sharing
 
 ---
 
-## 📸 Screenshots
+# 📸 Screenshots
 
-### 📌 In-Game Screens
+## In-Game Screens
 
 | 16:9 | 20:9 | 4:3 |
 |------|------|-----|
-| ![](./MyRecordings/InGameScreen16-9.png) <br> Oran: 16:9 | ![](./MyRecordings/InGameScreen20-9.png) <br> Oran: 20:9 | ![](./MyRecordings/InGameScreen4-3.png) <br> Oran: 4:3 |
+| ![](./MyRecordings/InGameScreen16-9.png) | ![](./MyRecordings/InGameScreen20-9.png) | ![](./MyRecordings/InGameScreen4-3.png) |
 
 ---
 
-### 📌 Rewards Screens
+## Reward Screens
 
 | 16:9 | 20:9 | 4:3 |
 |------|------|-----|
-| ![](./MyRecordings/RewardsScreen16-9.png) <br> Oran: 16:9 | ![](./MyRecordings/RewardsScreen20-9.png) <br> Oran: 20:9 | ![](./MyRecordings/RewardsScreen4-3.png) <br> Oran: 4:3 |
+| ![](./MyRecordings/RewardsScreen16-9.png) | ![](./MyRecordings/RewardsScreen20-9.png) | ![](./MyRecordings/RewardsScreen4-3.png) |
 
 ---
 
-### 📌 Bomb / Lose Screens
+## Bomb / Lose Screens
 
 | 16:9 | 20:9 | 4:3 |
 |------|------|-----|
-| ![](./MyRecordings/BombScreen16-9.png) <br> Oran: 16:9 | ![](./MyRecordings/BombScreen20-9.png) <br> Oran: 20:9 | ![](./MyRecordings/BombScreen4-3.png) <br> Oran: 4:3 |
+| ![](./MyRecordings/BombScreen16-9.png) | ![](./MyRecordings/BombScreen20-9.png) | ![](./MyRecordings/BombScreen4-3.png) |
 
 ---
 
-### 📌 Exit Screens
+## Exit Screens
 
 | 16:9 | 20:9 | 4:3 |
 |------|------|-----|
-| ![](./MyRecordings/ExitScreen16-9.png) <br> Oran: 16:9 | ![](./MyRecordings/ExitScreen20-9.png) <br> Oran: 20:9 | ![](./MyRecordings/ExitScreen4-3.png) <br> Oran: 4:3 |
+| ![](./MyRecordings/ExitScreen16-9.png) | ![](./MyRecordings/ExitScreen20-9.png) | ![](./MyRecordings/ExitScreen4-3.png) |
 
 ---
 
-## 🚀 Özellikler
+# 🚀 Core Features
 
-### Wheel Sistemi
-- Tüm Wheel parametreleri Inspector üzerinden ayarlanabilir.
-- WheelSlotController, her slice için SlotSO seçimini belirler.
-- allowedSlots boşsa → global slot listesinden rastgele.
-- allowedSlots doluysa → sadece listedeki SlotSO’lardan seçim.
-- 8 slot tamamlandıktan sonra rastgele bir slota **tek bomba** atanır.
-- Safe/Super Zone bölgelerinde bomba atanmaz.
-- Zone power arttıkça rarity ağırlıkları yükselir.
+## Wheel System
+- All wheel parameters adjustable via Inspector.
+- WheelSlotController selects SlotSO for each slice.
+- Empty `allowedSlots` → selection from global pool.
+- Defined `allowedSlots` → restricted selection.
+- Normal Zones → **1 bomb** assigned randomly.
+- Safe/Super Zones → **0 bombs**.
+- Rarity weights increase with zone progression.
 
-### Component & Event Akışı
-- OnSlotsChanged → Slotlar yenilenir.
-- OnWheelStopped → Çark durduğu anda slice index’i verir.
-- OnSlotSelected / OnBombSelected → Sonuç UI ve envantere işlenir.
+## Reward System
+- Automatic rarity weighting (Common–Legendary).
+- SlotSO stores icon, rarity, metadata, and values.
+- Reward scaling tied to zone index.
+- Zone power affects min-max reward outputs.
 
-### Ödül Sistemi
-- Common / Rare / Epic / Legendary rarity ağırlıkları otomatik hesaplanır.
-- SlotSO tüm ödül meta bilgilerini içerir.
-- Zone ilerledikçe ödül miktarları artar.
+## Zone System
+- Infinite horizontal scrolling structure.
+- Zones recycled when leaving the screen.
+- Safe Zone every 5 levels, Super Zone every 30 levels.
+- UI colors adapt dynamically per zone.
 
-### Zone Sistemi
-- Sonsuz yan kaydırmalı zone yapısı.
-- Ekran dışına çıkan zone geri dönüştürülür.
-- Safe/Super Zone interval değerleri GameCommonVariableManager’dan alınır.
-- UI renkleri zone tipine göre değişir.
+## Card System
+- New rewards create a new Card; duplicates increase count.
+- VFX sequence: scatter → move → fade.
+- All VFX controlled by Object Pool.
 
-### Card Sistemi
-- Yeni ödül için Card oluşturulur.
-- Aynı ödül gelirse count artar.
-- VFX: scatter → move → fade.
-- Tüm efektler ObjectPool ile yönetilir.
+## UI & Screen System
+- All screens use CanvasGroup fade transitions.
+- Bomb triggers red glow effect.
+- Buttons connected only via scripts (no Inspector OnClick).
+- UI animators stored on separate child objects.
 
-### UI & Screen Sistemi
-- Win/Lose/Rewards/Exit ekranları CanvasGroup fade ile gösterilir.
-- Bomb seçildiğinde kırmızı glow animasyonu devreye girer.
-- Tüm UI butonları bağımsız controller yapısına sahiptir.
-
-### Object Pooling
-- UI efekt prefabları için performanslı pool sistemi.
-- DOFade/DOMove sonrası otomatik despawn.
-
-### Kod Düzeni
-- Unity eventleri en üstte
-- Private fonksiyonlar ortada
-- Public API en altta
-- Tutarlı camelCase/PascalCase
-- SerializeField private alanlar
-- OnValidate ile güvenli kontrol
+## Object Pooling
+- All VFX pooled.
+- No Instantiate/Destroy during gameplay.
+- DOTween sequences auto-despawn.
 
 ---
 
-## 🧩 Mimari Akış
+# 🛠 Technical Compliance (Vertigo Requirements)
 
-1. Oyun başlar → Zone’lar oluşturulur.
-2. Spin butonu → Çark döner, hizalanır.
-3. Çark durur → Slot belirlenir.
-4. Ödül işlenir → Efekt + Card güncellemesi.
-5. Zone ilerler → WheelSlotController yeni slotları oluşturur.
-
----
-
-## 🗂 Proje Yapısı
-
-WheelSystem/  
-CardSystem/  
-SlotSystem/  
-ZoneSystem/  
-ZoneInfoSystem/  
-ScreenSystem/  
-ButtonSystem/  
-ObjectPoolSystem/  
-Managers/  
+- Canvas Scaler: **Expand**
+- All UI: **TextMeshPro**
+- Anchors/pivots verified for 20:9, 16:9, 4:3
+- Sliced Sprites used where needed
+- Non-interactive images → RaycastTarget disabled
+- No OnClick events in Inspector
+- Animator components not placed on root transforms
+- Dynamic UI names end with `_value`
+- Required resolution screenshots provided
 
 ---
 
-## 🕹 Nasıl Oynanır?
+# 📱 Minimum System Requirements for APK (Android)
 
-- Spin → Çark döner  
-- Bomb → Lose  
-- Ödül → Kart envanterine eklenir  
-- Zone ilerledikçe ödüller güçlenir  
-- Safe Zone → bomba yok  
-- Super Zone → yüksek rarity  
+- Android 7.0+
+- ARMv7 & ARM64 supported
+- Landscape-only
+- Tested on: 20:9, 16:9, 4:3
+
+---
+
+# 🎡 Wheel Spin Behaviour (Technical)
+
+- Spin uses DOTween → `DORotate`
+- Ease: **OutCubic**
+- Spin duration increases per zone
+- Final rotation snaps to nearest slice angle
+- Slice index determined from normalized Z rotation
+- Consistent behavior across all aspect ratios
+
+---
+
+# 📈 Zone Progression Formula
+
+- `zonePower = zoneIndex * powerMultiplier`
+- Reward ranges scale from zonePower
+- Rarity weights ramp with zoneIndex
+- Safe/Super Zones override bomb logic and modify rarity probabilities
+
+---
+
+# 💣 Bomb Logic
+
+- Normal Zones → **exactly 1 bomb**
+- Safe Zones → **0 bombs**
+- Super Zones → **0 bombs**
+- Bomb always assigned to a valid non-reward slice
+- If slice restrictions exist, bomb respects allowedSlots rules
+
+---
+
+# 🧩 ScriptableObject Structure
+
+## SlotSO
+- Icon  
+- Reward type  
+- Rarity  
+- Metadata  
+- Allowed slice configuration  
+
+## ZoneInfoSO
+- Zone type (Normal, Safe, Super)  
+- Theme colors  
+- Reward modifiers  
+- Rarity weighting  
+
+## CommonVariablesSO
+- Safe Zone interval  
+- Super Zone interval  
+- Base multipliers  
+- Global gameplay values  
+
+---
+
+# 🧩 Architectural Flow
+
+1. Game loads → Zones created  
+2. Player taps → Wheel spins  
+3. Wheel stops → Slice identified  
+4. Reward processed → Card updated  
+5. Zone progresses → New slots generated  
+6. Exit only possible in Safe & Super Zones  
