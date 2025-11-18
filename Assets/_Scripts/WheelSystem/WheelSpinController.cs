@@ -81,7 +81,7 @@ namespace WheelSystem
 
             _spinTransform
                 .DORotate(new Vector3(0f, 0f, targetZ), _fixSpinTime)
-                .SetEase(Ease.OutBack, 0.8f)
+                .SetEase(Ease.OutQuad, 0.8f)
                 .OnComplete(() => {
                     {
                         var stoppedSlice = Mathf.RoundToInt(_spinTransform.eulerAngles.z / (360f / sliceCount));
