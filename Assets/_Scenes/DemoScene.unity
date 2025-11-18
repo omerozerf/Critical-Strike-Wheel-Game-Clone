@@ -2123,6 +2123,7 @@ GameObject:
   m_Component:
   - component: {fileID: 708456711}
   - component: {fileID: 708456712}
+  - component: {fileID: 708456713}
   m_Layer: 0
   m_Name: Fps_Manager
   m_TagString: Untagged
@@ -2158,6 +2159,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetFps: 120
+--- !u!114 &708456713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 708456710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbd6744eaf6d48c1aa49929113abedca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _pools:
+  - _objectPoolType: 1
+    _prefab: {fileID: 1204146661679139361, guid: c7aaee3acc53544d0ba15f47545ce38b, type: 3}
+    _initialSize: 10
 --- !u!1 &724767652
 GameObject:
   m_ObjectHideFlags: 0
@@ -2922,13 +2939,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 936695733}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbd6744eaf6d48c1aa49929113abedca, type: 3}
+  m_Script: {fileID: 11500000, guid: 032544774e9445a1a802d048195dc196, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pools:
-  - _objectPoolType: 1
-    _prefab: {fileID: 1204146661679139361, guid: c7aaee3acc53544d0ba15f47545ce38b, type: 3}
-    _initialSize: 5
+  _objectPoolManager: {fileID: 708456713}
+  _objectPoolType: 1
+  _spawnRoot: {fileID: 936695734}
+  _target: {fileID: 46329529}
+  _effectParent: {fileID: 1352099631}
+  _defaultSpawnCount: 5
+  _scatterRadius: 40
+  _scatterDuration: 0.2
+  _moveDuration: 0.4
+  _betweenSpawnDelay: 0.03
 --- !u!1 &978267203
 GameObject:
   m_ObjectHideFlags: 0
