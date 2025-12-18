@@ -1,12 +1,3 @@
-## 🧾 Account Information (Company Games)
-
-| Game            | Username   | User ID          |
-|-----------------|------------|------------------|
-| Critical Strike | omerozerf  | CD4E2D1A0B6A200  |
-| Polygun Arena   | omerozerf  | B34B2DB5BF7167AB |
-
----
-
 # Wheel Rewards Progression Game
 
 A Unity game based on spinning mechanics and zone progression.  
@@ -109,7 +100,7 @@ Core systems include Wheel mechanics, Zone progression, Slot/Reward generation, 
 
 ---
 
-# 🛠 Technical Compliance (Vertigo Requirements)
+# 🛠 Technical Compliance
 
 - Canvas Scaler: **Expand**
 - All UI: **TextMeshPro**
