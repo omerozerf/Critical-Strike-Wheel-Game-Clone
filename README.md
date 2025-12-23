@@ -1,186 +1,142 @@
-# Wheel Rewards Progression Game
+# 🎡 Critical Strike Wheel Game Clone
 
-A Unity game based on spinning mechanics and zone progression.  
-The player spins the wheel to collect rewards, encounters higher-value rewards as zones advance, and avoids bombs while expanding their inventory.  
-Core systems include Wheel mechanics, Zone progression, Slot/Reward generation, Card inventory, Object Pooling, and animated UI structures.
+![Unity](https://img.shields.io/badge/Unity-2022.3%2B-black?style=flat&logo=unity)
+![Platform](https://img.shields.io/badge/Platform-Android-green?style=flat&logo=android)
+![Language](https://img.shields.io/badge/Language-C%23-blue?style=flat&logo=csharp)
+![Architecture](https://img.shields.io/badge/Architecture-Event--Driven-orange?style=flat)
 
----
+A high-fidelity clone of the "Critical Strike" wheel mini-game. This project demonstrates advanced Unity UI mechanics, infinite scrolling systems, object pooling, and asynchronous architectures.
 
 ## 🎮 Playable Demo
-
-👉 **https://omerozerf.itch.io/wheel-of-fortune**
-
----
-
-## 🎥 Gameplay Videos & Screenshots:  
-👉 **https://drive.google.com/drive/folders/1vAjKEF8tkwy2UwZllpBJsYHQo_hDQJl1?usp=sharing**
+👉 **[Play on Itch.io](https://omerozerf.itch.io/wheel-of-fortune)**
 
 ---
 
-## 🎮 Gameplay Preview
+## 📸 Visual Showcase
 
-| Image | Description |
-|-------|-------------|
-| ![](./MyRecordings/GameplayGIF.gif) | Gameplay GIF — Aspect Ratio: 16:9 |
+### Gameplay Preview
+| Mechanic | Visual |
+|:---:|:---:|
+| **Core Loop** | <img src="./MyRecordings/GameplayGIF.gif" width="100%"> |
 
----
+### Screen Gallery
+| In-Game | Rewards | Exit |
+|:---:|:---:|:---:|
+| <img src="./MyRecordings/InGameScreen16-9.png" width="200"> | <img src="./MyRecordings/RewardsScreen16-9.png" width="200"> | <img src="./MyRecordings/ExitScreen16-9.png" width="200"> |
 
-# 📸 Screenshots
-
-## In-Game Screens
-
-| 16:9 | 20:9 | 4:3 |
-|------|------|-----|
-| ![](./MyRecordings/InGameScreen16-9.png) | ![](./MyRecordings/InGameScreen20-9.png) | ![](./MyRecordings/InGameScreen4-3.png) |
+> **Note**: UI is responsive and tested on 16:9, 20:9, and 4:3 aspect ratios.
 
 ---
 
-## Reward Screens
+## 🏗 System Architecture
 
-| 16:9 | 20:9 | 4:3 |
-|------|------|-----|
-| ![](./MyRecordings/RewardsScreen16-9.png) | ![](./MyRecordings/RewardsScreen20-9.png) | ![](./MyRecordings/RewardsScreen4-3.png) |
+The project utilizes an event-driven architecture to decouple the UI, Logic, and Data layers.
 
----
+### Core Loop Flow
+```mermaid
+graph TD
+    User([User Input]) -->|Click| SpinButton
+    SpinButton -->|Event| WheelSpinController
+    
+    subgraph "Wheel System"
+        WheelSpinController -->|DOTween| SpinAnimation
+        SpinAnimation -->|OnComplete| CalculateResult
+        CalculateResult -->|Angle Fix| WheelSlotController
+    end
+    
+    subgraph "Zone & Logic"
+        WheelSlotController -->|Result Data| RewardSystem
+        RewardSystem -->|Update Inventory| CardSystem
+        WheelSpinController -->|Event| ZonePanelController
+        ZonePanelController -->|Recycle| InfiniteScroll
+    end
+```
 
-## Bomb / Lose Screens
+### Async Slot Management
+The `WheelSlotController` uses `UniTask` to handle the complex state transitions of the wheel slots:
 
-| 16:9 | 20:9 | 4:3 |
-|------|------|-----|
-| ![](./MyRecordings/BombScreen16-9.png) | ![](./MyRecordings/BombScreen20-9.png) | ![](./MyRecordings/BombScreen4-3.png) |
-
----
-
-## Exit Screens
-
-| 16:9 | 20:9 | 4:3 |
-|------|------|-----|
-| ![](./MyRecordings/ExitScreen16-9.png) | ![](./MyRecordings/ExitScreen20-9.png) | ![](./MyRecordings/ExitScreen4-3.png) |
-
----
-
-# 🚀 Core Features
-
-## Wheel System
-- All wheel parameters adjustable via Inspector.
-- WheelSlotController selects SlotSO for each slice.
-- Empty `allowedSlots` → selection from global pool.
-- Defined `allowedSlots` → restricted selection.
-- Normal Zones → **1 bomb** assigned randomly.
-- Safe/Super Zones → **0 bombs**.
-- Rarity weights increase with zone progression.
-
-## Reward System
-- Automatic rarity weighting (Common–Legendary).
-- SlotSO stores icon, rarity, metadata, and values.
-- Reward scaling tied to zone index.
-- Zone power affects min-max reward outputs.
-
-## Zone System
-- Infinite horizontal scrolling structure.
-- Zones recycled when leaving the screen.
-- Safe Zone every 5 levels, Super Zone every 30 levels.
-- UI colors adapt dynamically per zone.
-
-## Card System
-- New rewards create a new Card; duplicates increase count.
-- VFX sequence: scatter → move → fade.
-- All VFX controlled by Object Pool.
-
-## UI & Screen System
-- All screens use CanvasGroup fade transitions.
-- Bomb triggers red glow effect.
-- Buttons connected only via scripts (no Inspector OnClick).
-- UI animators stored on separate child objects.
-
-## Object Pooling
-- All VFX pooled.
-- No Instantiate/Destroy during gameplay.
-- DOTween sequences auto-despawn.
+```mermaid
+sequenceDiagram
+    participant Zone as ZoneController
+    participant Slots as WheelSlots
+    participant Pool as ObjectPool
+    
+    Zone->>Slots: Zone Changed
+    Slots->>Slots: Animate Hide (90deg)
+    Slots->>Slots: Fill Data (ScriptableObject)
+    Slots->>Slots: Assign Random Bomb
+    Slots->>Slots: Animate Reveal (0deg)
+    Note over Slots: Uses DOTween Sequences
+```
 
 ---
 
-# 🛠 Technical Compliance
+## 🚀 Technical Deep Dive
 
-- Canvas Scaler: **Expand**
-- All UI: **TextMeshPro**
-- Anchors/pivots verified for 20:9, 16:9, 4:3
-- Sliced Sprites used where needed
-- Non-interactive images → RaycastTarget disabled
-- No OnClick events in Inspector
-- Animator components not placed on root transforms
-- Dynamic UI names end with `_value`
-- Required resolution screenshots provided
+### 1. Advanced Wheel Physics
+- **Controller**: `WheelSpinController.cs`
+- **Logic**: Uses `DOTween` with `Ease.OutQuart` for a realistic deceleration effect.
+- **Precision**: Implements a "Fix Target Angle" post-spin correction to ensure the wheel always snaps perfectly to the center of a slice, calculating the nearest index based on normalized Z updates.
 
----
+### 2. Infinite Zone Scrolling
+- **Controller**: `ZonePanelController.cs`
+- **Recycling Logic**: Zones are not destroyed. Instead, when a zone moves off-screen to the left (`_leftRecycleX`), it is repositioned to the far right and updated with new data using `ZoneCreator`.
+- **Math**: `zonePower = zoneIndex * powerMultiplier` drives the difficulty curve.
 
-# 📱 Minimum System Requirements for APK (Android)
+### 3. Asynchronous UI & Pooling
+- **Inventory**: `CardPanelController` manages the fly-to-bag animations. It waits for the visual effect to complete before updating the data model, ensuring visual consistency.
+- **Performance**: `ObjectPoolManagerUI` handles all particle effects and temporary UI elements, preventing GC spikes during the spin cycle.
 
-- Android 7.0+
-- ARMv7 & ARM64 supported
-- Landscape-only
-- Tested on: 20:9, 16:9, 4:3
-
----
-
-# 🎡 Wheel Spin Behaviour (Technical)
-
-- Spin uses DOTween → `DORotate`
-- Ease: **OutCubic**
-- Spin duration increases per zone
-- Final rotation snaps to nearest slice angle
-- Slice index determined from normalized Z rotation
-- Consistent behavior across all aspect ratios
+### 4. Smart Bomb Logic
+- **Constraint Handling**: Bombs are injected dynamically into the wheel.
+- **Rules**:
+  - `Safe Zone`: No bombs.
+  - `Super Zone`: No bombs, high reward multiplier.
+  - `Normal Zone`: 1 Bomb injected into a non-winning slot.
+  - **Override**: If a slice has `allowedSlots` config (e.g., specific rewards only), the bomb logic respects it.
 
 ---
 
-# 📈 Zone Progression Formula
+## 📂 Project Structure
 
-- `zonePower = zoneIndex * powerMultiplier`
-- Reward ranges scale from zonePower
-- Rarity weights ramp with zoneIndex
-- Safe/Super Zones override bomb logic and modify rarity probabilities
-
----
-
-# 💣 Bomb Logic
-
-- Normal Zones → **exactly 1 bomb**
-- Safe Zones → **0 bombs**
-- Super Zones → **0 bombs**
-- Bomb always assigned to a valid non-reward slice
-- If slice restrictions exist, bomb respects allowedSlots rules
+```text
+Assets/_Scripts/
+├── Managers/           # Core Game Loop (FPS, Global Vars)
+├── WheelSystem/        # Rotational Logic & Slot Management
+│   ├── WheelSpinController.cs    # Physics & Input
+│   └── WheelSlotController.cs    # Data & Visual State
+├── ZoneSystem/         # Infinite Scrolling & Difficulty
+├── CardSystem/         # Inventory & Visual Feedback
+├── ObjectPoolSystem/   # Performance Optimization
+└── Editor/
+    └── AutoSpriteAtlas.cs  # Custom Tooling
+```
 
 ---
 
-# 🧩 ScriptableObject Structure
+## 🛠 Editor Tools
 
-## SlotSO
-- Icon  
-- Reward type  
-- Rarity  
-- Metadata  
-- Allowed slice configuration  
+The project includes custom editor tools to streamline the workflow.
 
-## ZoneInfoSO
-- Zone type (Normal, Safe, Super)  
-- Theme colors  
-- Reward modifiers  
-- Rarity weighting  
-
-## CommonVariablesSO
-- Safe Zone interval  
-- Super Zone interval  
-- Base multipliers  
-- Global gameplay values  
+- **Auto Sprite Atlas**: Located at `Tools/Vertigo UI/...`. Automatically creates and updates Sprite Atlases from folder contents, ensuring consistent compression and draw call optimization.
 
 ---
 
-# 🧩 Architectural Flow
+## 💻 Installation & Requirements
 
-1. Game loads → Zones created  
-2. Player taps → Wheel spins  
-3. Wheel stops → Slice identified  
-4. Reward processed → Card updated  
-5. Zone progresses → New slots generated  
-6. Exit only possible in Safe & Super Zones  
+- **Engine**: Unity 2022.3.x or later.
+- **Dependencies**:
+  - `DOTween` (Animation)
+  - `UniTask` (Async/Await support)
+  - `TextMeshPro` (UI)
+
+### Build Instructions
+1. Switch platform to **Android**.
+2. Ensure Scenes in Build has `_Scenes/Game`.
+3. Build APK.
+
+---
+
+## 🔗 Links & Resources
+
+- **Gameplay Folder**: [Google Drive](https://drive.google.com/drive/folders/1vAjKEF8tkwy2UwZllpBJsYHQo_hDQJl1?usp=sharing)
